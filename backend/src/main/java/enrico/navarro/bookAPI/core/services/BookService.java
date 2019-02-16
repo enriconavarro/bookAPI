@@ -5,4 +5,6 @@ import enrico.navarro.bookAPI.core.models.Book;
 public interface BookService {
 
 	void save(Book book);
+
+	Book getById(Long id);
 }
