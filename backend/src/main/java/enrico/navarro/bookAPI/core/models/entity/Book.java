@@ -1,9 +1,10 @@
-package enrico.navarro.bookAPI.core.models;
+package enrico.navarro.bookAPI.core.models.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.jsoup.nodes.Element;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -35,7 +36,7 @@ public class Book {
 	@NotNull(message = "book.isbn.req")
 	@Column
 	@JsonProperty
-	private Long isbn;
+	private String isbn;
 
 	@NotNull(message = "book.language.req")
 	@Size(min = 2, max = 2, message = "book.language.size")

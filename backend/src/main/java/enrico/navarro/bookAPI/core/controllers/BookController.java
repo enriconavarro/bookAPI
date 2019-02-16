@@ -1,6 +1,7 @@
 package enrico.navarro.bookAPI.core.controllers;
 
-import enrico.navarro.bookAPI.core.models.Book;
+import enrico.navarro.bookAPI.core.models.dto.BookList;
+import enrico.navarro.bookAPI.core.models.entity.Book;
 import enrico.navarro.bookAPI.core.services.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,12 @@ public class BookController {
 	public Book getById(@PathVariable Long id) {
 
 		return this.bookService.getById(id);
+	}
+
+	@GetMapping("/books")
+	public BookList findAll() {
+
+		return this.bookService.findAll();
 	}
 
 }
