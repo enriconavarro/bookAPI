@@ -50,6 +50,12 @@ public class BookServiceImpl implements BookService {
 		}
 	}
 
+	/***
+	 * Função que lê uma página e busca todos os livros de acordo com um formato específico.
+	 * @param doc Document da página onde será feita a busca
+	 * @return o DTO bookList com suas informações preenchidas
+	 * @throws IOException, caso ocorra algum erro para acessar a página
+	 */
 	private BookList getBooks(Document doc) throws IOException {
 
 		Element conteudo = doc.selectFirst("article");
@@ -59,6 +65,7 @@ public class BookServiceImpl implements BookService {
 
 			Element element = conteudo.child(i);
 
+			// Caso encontre algum h2, cria um livro
 			if (element.tagName().equals("h2")) {
 
 				Book book = new Book();
@@ -67,12 +74,13 @@ public class BookServiceImpl implements BookService {
 
 				element = conteudo.child(++i);
 
+				// Continua procurando pelos outros atributos do livro até encontrar outro livro ou ao final da lista
 				while (!element.tagName().equals("h2") && i < conteudo.children().size()) {
 
 					switch (element.tagName()) {
 
 						case "div":
-							book.setLanguage(element.ownText());
+							book.setLanguage(element.ownText().toUpperCase());
 							break;
 
 						case "p":
@@ -83,7 +91,7 @@ public class BookServiceImpl implements BookService {
 
 								book.setDescription(link.ownText());
 
-								book.setIsbn(this.getIsbn(link));
+								book.setIsbn(this.getIsbn(link.attr("href")));
 							}
 
 							if (book.getDescription() == null) {
@@ -115,18 +123,33 @@ public class BookServiceImpl implements BookService {
 		return bookList;
 	}
 
-	private String getIsbn(Element link) throws IOException {
+	/***
+	 * Função que a partir de uma url procura o ISBN do livro na página.
+	 * Foi feito um tratamento especial para a página da packtpub, pois ela informam o ISBN de uma forma
+	 * diferente.
+	 * @param url, string com a url da página em que o ISBN deve ser buscado
+	 * @return o ISBN encontrado, ou caso não seja encontrado, Unavaliable
+	 * @throws IOException, em caso de algum problema ao ler a página
+	 */
+	private String getIsbn(String url) throws IOException {
 
-		Document doc = Jsoup.connect(link.attr("href")).get();
+		Document doc = Jsoup.connect(url).get();
 
-		String html = doc.toString();
+		if (url.contains("packtpub")) {
 
-		Pattern ISBN_PATTERN = Pattern.compile("(ISBN[-]*(1[03])*[ ]*(: ){0,1})(([0-9Xx][- ]*){13}|([0-9Xx][- ]*){10})");
-		Matcher m = ISBN_PATTERN.matcher(html);
+			return doc.selectFirst("span[itemprop$=isbn]").ownText();
 
-		if (m.find()) {
+		} else {
 
-			return m.group();
+			String html = doc.toString();
+
+			Pattern ISBN_PATTERN = Pattern.compile("(ISBN[-]*(1[03])*[ ]*(: ){0,1})(([0-9Xx][- ]*){13}|([0-9Xx][- ]*){10})");
+			Matcher m = ISBN_PATTERN.matcher(html);
+
+			if (m.find()) {
+
+				return m.group().replaceAll("(ISBN[-]*(1[03])*[ ]*(: ){0,1})", "").trim();
+			}
 		}
 
 		return "Unavaliable";
