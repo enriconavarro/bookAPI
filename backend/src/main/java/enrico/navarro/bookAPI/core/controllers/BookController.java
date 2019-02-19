@@ -6,6 +6,9 @@ import enrico.navarro.bookAPI.core.services.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 @RestController
 public class BookController {
 
@@ -13,7 +16,7 @@ public class BookController {
 	private BookService bookService;
 
 	@PostMapping("/book")
-	public Book save(@RequestBody Book book) {
+	public Book save(@Valid @RequestBody Book book) {
 
 		this.bookService.save(book);
 

@@ -4,10 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
-import org.jsoup.nodes.Element;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 @Setter
@@ -22,24 +21,24 @@ public class Book {
 	@JsonProperty
 	private Long id;
 
-	@NotNull(message = "book.title.req")
-	@Size(max = 255, message = "book.title.max")
+	@NotEmpty(message = "{book.title.req}")
+	@Size(max = 255, message = "{book.title.size}")
 	@Column
 	@JsonProperty
 	private String title;
 
-	@NotNull(message = "book.description.req")
+	@NotEmpty(message = "{book.description.req}")
 	@Column
 	@JsonProperty
 	private String description;
 
-	@NotNull(message = "book.isbn.req")
+	@NotEmpty(message = "{book.isbn.req}")
 	@Column
 	@JsonProperty
 	private String isbn;
 
-	@NotNull(message = "book.language.req")
-	@Size(min = 2, max = 2, message = "book.language.size")
+	@NotEmpty(message = "{book.language.req}")
+	@Size(min = 2, max = 2, message = "{book.language.size}")
 	@Column
 	@JsonProperty
 	private String language;
